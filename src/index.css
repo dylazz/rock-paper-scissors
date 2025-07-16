@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+.game-choice-rock {
+    background-color: #211F4F;
+    border-color: #2E4D97;
+}
+
+.game-choice-paper {
+    background-color: #1A381D;
+    border-color: #187E3A;
+}
+
+.game-choice-scissors {
+    background-color: #50091E;
+    border-color: #9A0E30;
+}
+
+.game-win-choice-rock{
+    color:#2E4D97;
+}
+
+.game-win-choice-paper{
+    color:#187E3A;
+}
+
+.game-win-choice-scissors{
+    color:#9A0E30;
+}
+
+.game-color-gold {
+    color: #D4B37F;
+}
+
+.game-background {
+    background: linear-gradient(to bottom, #484848, #000000);
+}
