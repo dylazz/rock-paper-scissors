@@ -29,7 +29,7 @@ export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) =>
     const canPlaceAnyBet = !disabled && CHOICES.some(choice => canBetOnPosition(choice));
 
     return (
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center mb-16">
             {canPlaceAnyBet && (
                 <h3 className="text-lg font-semibold mb-4 text-gray-700 game-color-gold">Pick your positions</h3>
             )}
@@ -44,15 +44,16 @@ export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) =>
                             onClick={() => onPlaceBet(choice)}
                             disabled={!canBet}
                             className={`
-                p-4 rounded-lg border-2 transition-all duration-200 game-choice-${choice}
+                h-28 w-40 p-3 rounded-lg border-3 transition-all duration-200 game-choice-${choice}
+                flex flex-col h-24 relative
                 ${!canBet ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
-                            <span className="text-sm font-medium capitalize">{choice}</span>
                             {totalAmount > 0 && (
-                                <div>
-                                    <div>${totalAmount}</div>
+                                <div className={`rounded-full w-10 h-10 border-4 border-blue-700 bg-white flex items-center justify-center shadow-md mx-auto font-bold`}>
+                                    <div>{totalAmount}</div>
                                 </div>
                             )}
+                            <span className={`mt-auto justify-end text-2xl font-bold uppercase game-win-choice-${choice}`}>{choice}</span>
                         </button>
                     );
                 })}
