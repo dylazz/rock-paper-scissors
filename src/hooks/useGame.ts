@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { GameState, Choice } from '../types/gameTypes.ts';
 import { INITIAL_BALANCE, BET_AMOUNT, MAX_POSITIONS } from '../constants/gameConstants.ts';
-import { generateComputerChoice, calculateWinnings } from '../utils/gameLogic';
+import {generateComputerChoice, calculateWinnings, getRoundWinner} from '../utils/gameLogic';
 
 export const useGame = () => {
 
@@ -57,10 +57,11 @@ export const useGame = () => {
 
             const computerChoice = generateComputerChoice();
             const winnings = calculateWinnings(prev.player.currentRound.bets, computerChoice);
+            const winningChoice = getRoundWinner(prev.player.currentRound.bets, computerChoice);
 
             // Calculate how much was won this round (excluding the original bet amounts)
             const totalBetAmount = prev.player.currentRound.bets.reduce((sum, bet) => sum + bet.amount, 0);
-            const netWinnings = Math.max(0, winnings - totalBetAmount);
+            const netWinnings = winnings - totalBetAmount;
 
             // Round Complete: Updating state with results
             return {
@@ -71,7 +72,8 @@ export const useGame = () => {
                     cumulativeWins: prev.player.cumulativeWins + netWinnings, // Tracking total winnings
                     currentRound: {
                         ...prev.player.currentRound, // Keeping existing round data
-                        computerChoice // Adding computer's choice to round
+                        computerChoice, // Adding computer's choice to round
+                        winningChoice // Adding winning position to the round
                     }
                 },
                 isRoundComplete: true
@@ -85,10 +87,12 @@ export const useGame = () => {
             ...prev, // Keeping all existing state
             player: {
                 ...prev.player, // Keeping existing player data (balance, cumulativeWins)
+                // Clearing round data
                 currentRound: {
-                    bets: [], // Clearing all bets
-                    computerChoice: undefined, // Clearing computer choice
-                    result: undefined // Clearing result
+                    bets: [],
+                    computerChoice: undefined,
+                    result: undefined,
+                    winningChoice: undefined
                 }
             },
             isRoundComplete: false

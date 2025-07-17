@@ -11,6 +11,7 @@ export interface Bet {
 export interface GameRound {
     bets: Bet[];
     computerChoice?: Choice;
+    winningChoice?: Choice;
     result?: GameResult;
 }
 
