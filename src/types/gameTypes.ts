@@ -11,6 +11,7 @@ export interface Bet {
 export interface GameRound {
     bets: Bet[];
     computerChoice?: Choice;
+    playerBestChoice?: Choice;
     winningChoice?: Choice;
     result?: GameResult;
 }
@@ -24,4 +25,5 @@ export interface Player {
 export interface GameState {
     player: Player;
     isRoundComplete: boolean;
+    isShowingAnimation: boolean;
 }
