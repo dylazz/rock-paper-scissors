@@ -104,7 +104,7 @@ export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number =
             return totalBetAmount;
         }
         if (result === 'win') {
-            return (totalBetAmount * SINGLE_BET_MULTIPLIER) - totalBetAmount;
+            return (totalBetAmount * SINGLE_BET_MULTIPLIER);
         }
     }
     // If two positions have bets, use double bet multiplier
@@ -117,7 +117,7 @@ export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number =
             if (result === 'win') {
                 // Add total bet amount for this position * double multiplier
                 const totalBetAmount = getTotalBetAmount(positionBets);
-                winnings += (totalBetAmount * DOUBLE_BET_MULTIPLIER) - totalBetAmount;
+                winnings += (totalBetAmount * DOUBLE_BET_MULTIPLIER);
             }
             // In case of two positions, ties are lost as per requirements
         });

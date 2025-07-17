@@ -11,7 +11,7 @@ export const ActionButton = ({ onPlay, onNewRound, isRoundComplete, canPlay }: A
         <div className="flex justify-center mb-6">
           <button
               onClick={onNewRound}
-              className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="px-9 py-3 bg-black text-lg font-semibold rounded-full border-2 game-color-gold hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             CLEAR
           </button>
@@ -24,7 +24,7 @@ export const ActionButton = ({ onPlay, onNewRound, isRoundComplete, canPlay }: A
         <button
             onClick={onPlay}
             disabled={!canPlay}
-            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-13 py-5 bg-black text-lg font-semibold rounded-full border-2 game-color-gold hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           PLAY
         </button>

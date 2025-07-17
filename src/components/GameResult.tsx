@@ -9,7 +9,8 @@ interface GameResultProps {
 
 export const GameResult = ({computerChoice, winningChoice, bets}: GameResultProps) => {
 
-    const totalWinnings = calculateWinnings(bets, computerChoice);
+    const totalBetAmount = bets.reduce((sum, bet) => sum + bet.amount, 0);
+    const totalWinnings = calculateWinnings(bets, computerChoice) - totalBetAmount;
     const resultText = getGameResultText(bets, computerChoice);
     const hasWin = resultText === 'YOU WIN';
 
