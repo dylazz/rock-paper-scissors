@@ -19,14 +19,12 @@ export const GameResult = ({computerChoice, winningChoice, bets}: GameResultProp
             <h3 className={`text-4xl font-bold game-win-choice-${winningChoice} mb-2`}>
                 {winningChoice.toUpperCase()} WON
             </h3>
-            <div className="text-2xl font-bold text-white mb-1">
-                {resultText}
+            <div className="text-2xl font-bold mb-1">
+                <span className="text-white">{resultText}</span>
+                {hasWin && (
+                    <span className="game-color-gold"> {totalWinnings}</span>
+                )}
             </div>
-            {hasWin && (
-                <div className="text-xl text-white">
-                    ${totalWinnings}
-                </div>
-            )}
         </div>
     );
 };

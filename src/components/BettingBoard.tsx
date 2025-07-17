@@ -44,12 +44,12 @@ export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) =>
                             onClick={() => onPlaceBet(choice)}
                             disabled={!canBet}
                             className={`
-                h-28 w-40 p-3 rounded-lg border-3 transition-all duration-200 game-choice-${choice}
-                flex flex-col h-24 relative
+                h-28 w-45 h-32 p-3 rounded-lg border-3 transition-all duration-200 game-choice-${choice}
+                flex flex-col relative
                 ${!canBet ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                             {totalAmount > 0 && (
-                                <div className={`rounded-full w-10 h-10 border-4 border-blue-700 bg-white flex items-center justify-center shadow-md mx-auto font-bold`}>
+                                <div className={`rounded-full w-14 h-14 border-5 border-blue-700 bg-white flex items-center justify-center shadow-md mx-auto font-bold`}>
                                     <div>{totalAmount}</div>
                                 </div>
                             )}
