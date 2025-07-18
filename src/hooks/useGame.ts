@@ -79,14 +79,14 @@ export const useGame = () => {
                 setGameState(prev => {
                     const winnings = calculateWinnings(prev.player.currentRound.bets, prev.player.currentRound.computerChoice!);
                     const totalBetAmount = prev.player.currentRound.bets.reduce((sum, bet) => sum + bet.amount, 0);
-
+                    const actualWinnings = winnings > totalBetAmount ? winnings : 0;
                     // Phase 2: Show
                     return {
                         ...prev, // Keeping existing state
                         player: {
                             ...prev.player, // Keeping existing player datac
                             balance: prev.player.balance + winnings, // Adding winnings to balance
-                            cumulativeWins: prev.player.cumulativeWins + Math.max(0, winnings - totalBetAmount),
+                            cumulativeWins: prev.player.cumulativeWins + actualWinnings,
                             // Ensuring cumulative wins never go below 0
                             currentRound: {
                                 ...prev.player.currentRound, // Keeping existing round data
