@@ -1,5 +1,7 @@
-import type {Choice, Bet} from '../types/gameTypes.ts';
-import {CHOICES, MAX_POSITIONS} from '../constants/gameConstants.ts';
+import type {Choice, Bet} from '../types/gameTypes';
+import {gameConfig} from '../config/gameConfig';
+import {getBetAmountForChoice} from "../utils/betUtils";
+import {canBetOnPosition, canPlaceAnyBet} from "../utils/displayUtils";
 
 interface BettingBoardProps {
     bets: Bet[];
@@ -7,36 +9,30 @@ interface BettingBoardProps {
     disabled: boolean;
 }
 
+/**
+ * BettingBoard Component
+ *
+ * Renders the betting interface with buttons for each choice (rock, paper, scissors).
+ * Each button shows:
+ * - The choice name
+ * - Current bet amount
+ * - Visual feedback for enabled/disabled states
+ *
+ */
+
 export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) => {
-    // calculate total amount bet on a specific choice
-    const getTotalBetAmount = (choice: Choice) =>
-        bets.filter(bet => bet.position === choice).reduce((sum, bet) => sum + bet.amount, 0);
-
-    // Get unique positions that have bets
-    const uniquePositions = new Set(bets.map(bet => bet.position));
-
-    // Check if a position can be bet on
-    const canBetOnPosition = (choice: Choice) => {
-        if (disabled) return false;
-
-        // If we already have bets on this position, we can add more
-        if (uniquePositions.has(choice)) return true;
-
-        // If we don't have bets on this position, check if we can add a new position
-        return uniquePositions.size < MAX_POSITIONS;
-    };
-    // Check if any betting is possible
-    const canPlaceAnyBet = !disabled && CHOICES.some(choice => canBetOnPosition(choice));
+    const canPlaceBet = canPlaceAnyBet(bets, gameConfig.choices, disabled);
 
     return (
         <div className="flex flex-col items-center mb-16">
-            {canPlaceAnyBet && (
+            {canPlaceBet && (
                 <h3 className="text-lg font-semibold mb-4 text-gray-700 game-color-gold">Pick your positions</h3>
             )}
+            {/* Rendering choice buttons */}
             <div className="grid grid-cols-3 gap-3">
-                {CHOICES.map((choice) => {
-                    const totalAmount = getTotalBetAmount(choice);
-                    const canBet = canBetOnPosition(choice);
+                {gameConfig.choices.map((choice) => {
+                    const totalAmount = getBetAmountForChoice(bets, choice);
+                    const canBet = canBetOnPosition(bets, choice, disabled);
 
                     return (
                         <button
@@ -44,20 +40,28 @@ export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) =>
                             onClick={() => onPlaceBet(choice)}
                             disabled={!canBet}
                             className={`
-                h-28 w-45 h-32 p-3 rounded-lg border-3 transition-all duration-200 game-choice-${choice}
-                flex flex-col relative
-                ${!canBet ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                w-45 h-28 p-3 rounded-lg border-3 transition-all duration-200 game-choice-${choice}
+                                flex flex-col relative
+                                ${!canBet ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                            `}
                         >
+                            {/* Show bet amount chip if player has bets on this choice */}
                             {totalAmount > 0 && (
-                                <div className={`rounded-full w-14 h-14 border-5 border-blue-700 bg-white flex items-center justify-center shadow-md mx-auto font-bold`}>
+                                <div
+                                    className="rounded-full w-14 h-14 border-5 border-blue-700 bg-white flex items-center justify-center shadow-md mx-auto font-bold">
                                     <div>{totalAmount}</div>
                                 </div>
                             )}
-                            <span className={`mt-auto justify-end text-2xl font-bold uppercase game-win-choice-${choice}`}>{choice}</span>
+
+                            {/* Choice label (rock, paper, scissors) */}
+                            <span
+                                className={`mt-auto justify-end text-2xl font-bold uppercase game-win-choice-${choice}`}>
+                                {choice}
+                            </span>
                         </button>
                     );
                 })}
             </div>
         </div>
     );
-};
+}

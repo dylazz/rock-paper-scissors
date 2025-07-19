@@ -1,7 +1,6 @@
-import { CHOICES } from '../constants/gameConstants.ts';
+import {gameConfig} from "../config/gameConfig";
 
-export type Choice = typeof CHOICES[number];
-export type GameResult = 'win' | 'lose' | 'tie';
+export type Choice = typeof gameConfig.choices[number];
 
 export interface Bet {
     position: Choice;
@@ -13,7 +12,6 @@ export interface GameRound {
     computerChoice?: Choice;
     playerBestChoice?: Choice;
     winningChoice?: Choice;
-    result?: GameResult;
 }
 
 export interface Player {
