@@ -55,8 +55,8 @@ export const getRoundWinningChoice = (bets: Bet[], computerChoice: Choice): Choi
  * - Single position: 14x multiplier, ties refunded
  * - Multiple positions: 3x multiplier, no ties
  */
-export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number => {
-    let winnings = 0;
+export const calculatePayout = (bets: Bet[], computerChoice: Choice): number => {
+    let payout = 0;
     const { betsByPosition, uniquePositions } = groupBetsByPosition(bets);
 
     // If only one position has bets, use single bet multiplier
@@ -81,10 +81,46 @@ export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number =
 
             if (result === 'win') {
                 const totalBetAmount = getTotalBetAmount(positionBets);
-                winnings += totalBetAmount * gameConfig.doubleBetMultiplier;
+                payout += totalBetAmount * gameConfig.doubleBetMultiplier;
             }
             // No ties with multiple positions - ties lose
         });
     }
-    return winnings;
+    return payout;
+};
+
+/**
+ * Calculates actual winnings from winning positions only (excludes refunds)
+ * Used for cumulative wins tracking
+ */
+export const calculateGlobalWins = (bets: Bet[], computerChoice: Choice): number => {
+    let globalWinnings = 0;
+    const { betsByPosition, uniquePositions } = groupBetsByPosition(bets);
+
+    // Single position betting: only wins count (ties are refunds, not wins)
+    if (uniquePositions.length === 1) {
+        const position = uniquePositions[0];
+        const positionBets = betsByPosition[position];
+        const result = determineRoundResult(position, computerChoice);
+
+        if (result === 'win') {
+            const totalBetAmount = getTotalBetAmount(positionBets);
+            globalWinnings = totalBetAmount * gameConfig.singleBetMultiplier;
+        }
+        // Ties and losses = 0 actual winnings
+    }
+    // Multiple position betting: only winning positions count
+    else if (uniquePositions.length === 2) {
+        uniquePositions.forEach(position => {
+            const positionBets = betsByPosition[position];
+            const result = determineRoundResult(position, computerChoice);
+
+            if (result === 'win') {
+                const totalBetAmount = getTotalBetAmount(positionBets);
+                globalWinnings += totalBetAmount * gameConfig.doubleBetMultiplier;
+            }
+            // Ties and losses = 0 actual winnings
+        });
+    }
+    return globalWinnings;
 };

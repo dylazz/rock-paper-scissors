@@ -1,5 +1,5 @@
 import type {Choice, Bet} from '../types/gameTypes';
-import {calculateWinnings} from '../core/gameLogic';
+import {calculatePayout} from '../core/gameLogic';
 import {getRoundResultText} from "../utils/displayUtils";
 
 interface GameResultProps {
@@ -16,7 +16,7 @@ interface GameResultProps {
 
 export const GameResult = ({computerChoice, winningChoice, bets}: GameResultProps) => {
 
-    const totalWinnings = calculateWinnings(bets, computerChoice);
+    const totalWinnings = calculatePayout(bets, computerChoice);
     const resultText = getRoundResultText(bets, computerChoice);
     const hasWin = resultText === 'YOU WIN';
 

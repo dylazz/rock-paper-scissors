@@ -3,9 +3,9 @@ import {gameConfig} from '../config/gameConfig';
 import {
     getPlayerBestChoice,
     getRoundWinningChoice,
-    calculateWinnings
+    calculatePayout, calculateGlobalWins
 } from './gameLogic.ts';
-import {getTotalBetAmount, getUniqueBetPositions} from "../utils/betUtils.ts";
+import {getUniqueBetPositions} from "../utils/betUtils.ts";
 import {generateComputerChoice} from "./gameRules.ts";
 
 export interface GameCoreInterface {
@@ -146,11 +146,8 @@ export class GameCore implements GameCoreInterface {
 
         // Completing round after animation delay
         setTimeout(() => {
-            const winnings = calculateWinnings(this.state.player.currentRound.bets, computerChoice);
-            const totalBetAmount = getTotalBetAmount(this.state.player.currentRound.bets);
-
-            // Checking if this is an actual win
-            const isActualWin = winnings > totalBetAmount;
+            const winnings = calculatePayout(this.state.player.currentRound.bets, computerChoice);
+            const totalWins = calculateGlobalWins(this.state.player.currentRound.bets, computerChoice);
 
             this.state = {
                 ...this.state,
@@ -158,7 +155,7 @@ export class GameCore implements GameCoreInterface {
                     ...this.state.player,
                     balance: this.state.player.balance + winnings,
                     // Adding the full winnings amount to cumulative wins only if it's an actual win
-                    cumulativeWins: this.state.player.cumulativeWins + (isActualWin ? winnings : 0)
+                    cumulativeWins: this.state.player.cumulativeWins + totalWins
                 },
                 isShowingAnimation: false,
                 isRoundComplete: true
