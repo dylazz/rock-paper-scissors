@@ -19,23 +19,23 @@ export const GameHeader = ({ balance, currentRoundBets, cumulativeWins }: GameHe
     const currentRoundTotal = currentRoundBets.reduce((sum, bet) => sum + bet.amount, 0);
 
     return (
-        <div className="w-full bg-black text-white flex justify-center items-center space-x-8 game-color-gold">
+        <div className="w-full bg-black text-white flex justify-center items-center space-x-14 game-color-gold p-1">
             {/* Player's current balance */}
             <div className="flex items-center space-x-2 color">
-                <span className="text-sm font-medium">BALANCE:</span>
-                <span className="text-lg font-bold text-white">{balance.toLocaleString()}</span>
+                <span className="text-md font-medium">BALANCE:</span>
+                <span className="text-md font-bold text-white">{balance.toLocaleString()}</span>
             </div>
 
             {/* Current round bet total */}
             <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium">BET:</span>
-                <span className="text-lg font-bold text-white">{currentRoundTotal.toLocaleString()}</span>
+                <span className="text-md font-medium">BET:</span>
+                <span className="text-md font-bold text-white">{currentRoundTotal.toLocaleString()}</span>
             </div>
 
             {/* Cumulative winnings across all rounds */}
             <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium">WINS:</span>
-                <span className="text-lg font-bold text-white">{cumulativeWins.toLocaleString()}</span>
+                <span className="text-md font-medium">WINS:</span>
+                <span className="text-md font-bold text-white">{cumulativeWins.toLocaleString()}</span>
             </div>
         </div>
     );
