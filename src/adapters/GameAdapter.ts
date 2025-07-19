@@ -7,7 +7,6 @@ import type {Choice, GameState} from "../types/gameTypes";
  *
  */
 
-
 export interface GameAdapter {
   getState(): GameState;
   subscribe(listener: (state: GameState) => void): () => void;

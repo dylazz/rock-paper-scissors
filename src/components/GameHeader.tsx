@@ -13,7 +13,6 @@ interface GameHeaderProps {
  * - BALANCE: Current available money for betting
  * - BET: Total amount bet in the current round
  * - WINS: Cumulative winnings across all rounds
- *
  */
 
 export const GameHeader = ({ balance, currentRoundBets, cumulativeWins }: GameHeaderProps) => {

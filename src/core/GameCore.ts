@@ -1,4 +1,4 @@
-import type { Choice, Bet, GameState } from '../types/gameTypes';
+import type {Choice, Bet, GameState} from '../types/gameTypes';
 import {gameConfig} from '../config/gameConfig';
 import {
     getPlayerBestChoice,
@@ -53,21 +53,26 @@ export class GameCore implements GameCoreInterface {
 
     // Returns a copy of current state
     public getState(): GameState {
-        return { ...this.state };
+        return {...this.state};
     }
 
-    // Observer pattern implementation for state change notifications
+    /**
+     * Subscribes a listener to game state changes (Observer pattern)
+     * @param listener - Callback function invoked when state changes
+     * @returns Unsubscribe function to remove the listener
+     */
     public subscribe(listener: (state: GameState) => void): () => void {
         this.listeners.add(listener);   // Adds the listener function to the set (subscribe)
         return () => this.listeners.delete(listener);   // Removes the listener function from the set (unsubscribe)
     }
 
-    // Sends latest state to all subscribers
+    /**
+     * Notifies all subscribers of state changes
+     */
     private notifyListeners(): void {
         this.listeners.forEach(listener => listener(this.getState()));
     }
 
-    // Places a bet on the specified choice position
     public placeBet(position: Choice): void {
         // Preventing betting during animation or completed rounds
         if (this.state.isShowingAnimation || this.state.isRoundComplete) {
@@ -177,7 +182,6 @@ export class GameCore implements GameCoreInterface {
             isShowingAnimation: false,
             isRoundComplete: false
         };
-
         this.notifyListeners();
     }
 }

@@ -4,15 +4,17 @@ import {determineRoundResult} from "./gameRules";
 import {getTotalBetAmount, groupBetsByPosition} from "../utils/betUtils";
 
 /**
- * Determines the player's best choice based on their bets and the computer's choice
+ * Game Logic - Core Business Rules
  *
- * Strategy: Prioritize choices in order of preference:
- * 1. Winning choice (if player has one)
- * 2. Tie choice (if player has one)
- * 3. Losing choice (fallback)
- * 4. First available choice (final fallback)
+ * Contains the core game logic for determining outcomes, calculating winnings,
+ * and implementing the strategic rules of the Rock-Paper-Scissors betting game.
  */
- export const getPlayerBestChoice = (bets: Bet[], computerChoice: Choice): Choice => {
+
+
+/**
+ * Player choice strategy: Win > Tie > Loss priority
+ */
+export const getPlayerBestChoice = (bets: Bet[], computerChoice: Choice): Choice => {
     const { uniquePositions } = groupBetsByPosition(bets);
 
     let winningChoice: Choice | null = null;
@@ -36,10 +38,7 @@ import {getTotalBetAmount, groupBetsByPosition} from "../utils/betUtils";
     return winningChoice || tieChoice || losingChoice || uniquePositions[0];
 };
 
-/**
- * Determines which choice wins the overall round
- */
- export const getRoundWinningChoice = (bets: Bet[], computerChoice: Choice): Choice => {
+export const getRoundWinningChoice = (bets: Bet[], computerChoice: Choice): Choice => {
     const playerBestChoice = getPlayerBestChoice(bets, computerChoice);
     const result = determineRoundResult(playerBestChoice, computerChoice);
 
@@ -52,14 +51,11 @@ import {getTotalBetAmount, groupBetsByPosition} from "../utils/betUtils";
 };
 
 /**
- * Calculates total winnings based on player bets and computer choice
- *
  * Payout rules:
- * - Single position betting: 14x multiplier for wins, full refund for ties
- * - Multiple position betting: 3x multiplier for wins, no ties possible
- * - No payout for losses
+ * - Single position: 14x multiplier, ties refunded
+ * - Multiple positions: 3x multiplier, no ties
  */
- export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number => {
+export const calculateWinnings = (bets: Bet[], computerChoice: Choice): number => {
     let winnings = 0;
     const { betsByPosition, uniquePositions } = groupBetsByPosition(bets);
 

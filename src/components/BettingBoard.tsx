@@ -17,7 +17,6 @@ interface BettingBoardProps {
  * - The choice name
  * - Current bet amount
  * - Visual feedback for enabled/disabled states
- *
  */
 
 export const BettingBoard = ({bets, onPlaceBet, disabled}: BettingBoardProps) => {
