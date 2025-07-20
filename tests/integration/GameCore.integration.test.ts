@@ -25,71 +25,102 @@ describe('GameCore Multi-Round Integration Test', () => {
         vi.clearAllMocks();
     });
 
-    it('should handle multi-round scenario with varying bet amounts and outcomes', () => {
-        // Initial state verification
-        expect(gameCore.getState().player.balance).toBe(5000);
-        expect(gameCore.getState().player.cumulativeWins).toBe(0);
+    // Helper function to complete a round
+    const completeRound = () => {
+        gameCore.completeBetting();
+        vi.advanceTimersByTime(2000);
+    };
 
-        // === ROUND 1 - Win Scenario : Player bets 500 on rock + 500 on paper, wins
+    it('should maintain state correctly across multiple rounds with different outcomes', () => {
+        // Initial state verification
+        let state = gameCore.getState();
+        expect(state.player.balance).toBe(5000);
+        expect(state.player.cumulativeWins).toBe(0);
+        expect(state.isRoundComplete).toBe(false);
+
+        // === ROUND 1 - Double Bet Win Scenario (rock beats scissors)
         mockedGenerateComputerChoice.mockReturnValue('scissors');
 
-        gameCore.placeBet('rock');
-        gameCore.placeBet('paper');
+        gameCore.placeBet('rock'); // 500
+        gameCore.placeBet('paper'); // 500
 
-        let state = gameCore.getState();
+        state = gameCore.getState();
         expect(state.player.balance).toBe(4000); // 5000 - 1000 (two bets)
         expect(state.player.currentRound.bets.length).toBe(2);
 
-        // Complete betting and fast-forward animation
-        gameCore.completeBetting();
-        vi.advanceTimersByTime(2000);
+        completeRound();
 
         state = gameCore.getState();
-        expect(state.player.balance).toBe(5500); // 4000 + 1500 (rock wins vs scissors)
+        // Double bet: rock wins (500 * 3), paper loses (0) = 1500 payout
+        expect(state.player.balance).toBe(5500); // 4000 + 1500
         expect(state.player.cumulativeWins).toBe(1500); // Adding 1500 to cumulative wins
         expect(state.isRoundComplete).toBe(true);
 
-        // === ROUND 2: Player bets 1000+500, wins on 500 (Balance remains the same)
+        // === ROUND 2 - Double Bet Win Scenario
         gameCore.startNewRound();
+
+        // Verify clean slate after new round
+        state = gameCore.getState();
+        expect(state.isRoundComplete).toBe(false);
+        expect(state.player.currentRound.bets.length).toBe(0);
+
         mockedGenerateComputerChoice.mockReturnValue('rock');
 
         // Place bets: 1000 on rock (2 bets), 500 on paper (1 bet)
-        gameCore.placeBet('rock');
-        gameCore.placeBet('rock');
-        gameCore.placeBet('paper');
+        gameCore.placeBet('rock'); // 500
+        gameCore.placeBet('rock'); // 500
+        gameCore.placeBet('paper'); // 500
 
         state = gameCore.getState();
-        expect(state.player.balance).toBe(4000);
+        expect(state.player.balance).toBe(4000); // 5500 - 1500
         expect(state.player.currentRound.bets.length).toBe(3);
 
-        // Complete betting and fast-forward animation
-        gameCore.completeBetting();
-        vi.advanceTimersByTime(2000);
+        completeRound();
 
         state = gameCore.getState();
-        expect(state.player.balance).toBe(5500);
-        expect(state.player.cumulativeWins).toBe(3000);
+        // Double bet: rock loses (-1000), paper wins (500 * 3) = 1500 payout
+        expect(state.player.balance).toBe(5500); // 4000 + 1500
+        expect(state.player.cumulativeWins).toBe(3000); // 1500 + 1500
         expect(state.isRoundComplete).toBe(true);
 
-        // === ROUND 3: Player bets 500, loses
+        // === ROUND 3: Single bet loss
         gameCore.startNewRound();
         mockedGenerateComputerChoice.mockReturnValue('paper');
 
-        // Place single bet: 500 on rock
-        gameCore.placeBet('rock');
+        gameCore.placeBet('rock'); // 500
 
         state = gameCore.getState();
-        expect(state.player.balance).toBe(5000);
+        expect(state.player.balance).toBe(5000); // 5500 - 500
         expect(state.player.currentRound.bets.length).toBe(1);
 
-        // Complete betting and fast-forward animation
-        gameCore.completeBetting();
-        vi.advanceTimersByTime(2000);
+        completeRound();
 
-        // Final state verification
         state = gameCore.getState();
-        expect(state.player.balance).toBe(5000);
-        expect(state.player.cumulativeWins).toBe(3000);
+        expect(state.player.balance).toBe(5000); // No winnings added (Lost 500)
+        expect(state.player.cumulativeWins).toBe(3000); // Unchanged
         expect(state.isRoundComplete).toBe(true);
+    });
+
+    it('should handle tie scenario in multi-round context', () => {
+        // First round: win to build up cumulative wins
+        mockedGenerateComputerChoice.mockReturnValue('scissors');
+        gameCore.placeBet('rock');
+        completeRound();
+
+        let state = gameCore.getState();
+        // Single bet win: 500 * 14 = 7000 payout
+        expect(state.player.balance).toBe(11500); // 5000 - 500 + 7000
+        expect(state.player.cumulativeWins).toBe(7000);
+
+        // Second round: tie scenario
+        gameCore.startNewRound();
+        mockedGenerateComputerChoice.mockReturnValue('rock');
+        gameCore.placeBet('rock');
+        completeRound();
+
+        state = gameCore.getState();
+        // Single bet tie: returns bet amount (500)
+        expect(state.player.balance).toBe(11500); // Should remain Unchanged
+        expect(state.player.cumulativeWins).toBe(7000); // Should remain unchanged
     });
 });
